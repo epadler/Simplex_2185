@@ -4,7 +4,8 @@ void Application::InitVariables(void)
 	//init the mesh
 	m_pMesh = new MyMesh();
 	//m_pMesh->GenerateCube(1.0f, C_WHITE);
-	m_pMesh->GenerateSphere(1.0f, 5, C_WHITE);
+	// m_pMesh->GenerateSphere(1.0f, 5, C_WHITE);
+	m_pMesh->GenerateCube(1.0f, C_BLACK);
 }
 void Application::Update(void)
 {
@@ -34,6 +35,11 @@ void Application::Display(void)
 	matrix4 m4Model = m4Scale * m4Translate;
 
 	m_pMesh->Render(m4Projection, m4View, m4Model);
+	m4Translate = glm::translate(IDENTITY_M4, vector3(value+1, 2.0f, 3.0f));
+	m4Model = m4Scale * m4Translate;
+
+	m_pMesh->Render(m4Projection, m4View, m4Model);
+
 	
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();

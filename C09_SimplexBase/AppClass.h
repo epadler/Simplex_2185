@@ -7,6 +7,8 @@ Date: 2017/05
 
 #include "Definitions.h"
 
+#include "MyMesh.h"
+
 #include "ControllerConfiguration.h"
 #include "imgui\ImGuiObject.h"
 

@@ -173,6 +173,45 @@ void MyMesh::AddQuad(vector3 a_vBottomLeft, vector3 a_vBottomRight, vector3 a_vT
 	AddVertexPosition(a_vBottomRight);
 	AddVertexPosition(a_vTopRight);
 }
+void MyMesh::GenerateCircle(float a_fRadius, int a_nSubdivisions, vector3 a_v3Color)
+{
+	// Release();
+	// Init();
+
+	if (a_fRadius < 0.01f)
+		a_fRadius = 0.01f;
+
+	if (a_nSubdivisions < 3)
+		a_nSubdivisions = 3;
+	if (a_nSubdivisions > 360)
+		a_nSubdivisions = 360;
+
+	/*
+	Calculate a_nSubdivisions number of points around a center point in a radial manner
+	then call the AddTri function to generate a_nSubdivision number of faces
+	*/
+	float degRot = (float)(2 * PI / a_nSubdivisions);
+	vector3 startTriA = vector3(0, 0, 0);
+	vector3 startTriB = vector3(-a_fRadius * sin(PI / (a_nSubdivisions)), -a_fRadius * cos(PI / (a_nSubdivisions)), 0);
+	vector3 startTriC = vector3(a_fRadius*sin(PI / a_nSubdivisions), -a_fRadius * cos(PI / a_nSubdivisions), 0);
+
+	AddTri(startTriA, startTriC, startTriB);
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		glm::mat4 rotationMat(1);
+		float degRot = (float)(2 * PI / a_nSubdivisions);
+		rotationMat = glm::rotate(rotationMat, degRot, glm::vec3(0.0, 0.0, 1.0));
+		startTriA = glm::vec3(rotationMat * glm::vec4(startTriA, 1.0));
+		startTriB = glm::vec3(rotationMat * glm::vec4(startTriB, 1.0));
+		startTriC = glm::vec3(rotationMat * glm::vec4(startTriC, 1.0));
+		AddTri(startTriA, startTriC, startTriB);
+	}
+
+	// Adding information about color
+	CompleteMesh(a_v3Color);
+	CompileOpenGL3X();
+}
+
 void MyMesh::GenerateCube(float a_fSize, vector3 a_v3Color)
 {
 	if (a_fSize < 0.01f)
@@ -276,8 +315,41 @@ void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions,
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
 	// -------------------------------
+	float degRot = (float)(2 * PI / a_nSubdivisions);
+	vector3 startTriA = vector3(0, 0, a_fHeight/2);
+	vector3 startTriB = vector3(-a_fRadius * sin(PI / (a_nSubdivisions)), -a_fRadius * cos(PI / (a_nSubdivisions)), -a_fHeight / 2);
+	vector3 startTriC = vector3(a_fRadius*sin(PI / a_nSubdivisions), -a_fRadius * cos(PI / a_nSubdivisions), -a_fHeight / 2);
+
+	AddTri(startTriC, startTriB, startTriA);
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		glm::mat4 rotationMat(1);
+		float degRot = (float)(2 * PI / a_nSubdivisions);
+		rotationMat = glm::rotate(rotationMat, degRot, glm::vec3(0.0, 0.0, 1.0));
+		// startTriA = glm::vec3(rotationMat * glm::vec4(startTriA, 1.0));
+		startTriB = glm::vec3(rotationMat * glm::vec4(startTriB, 1.0));
+		startTriC = glm::vec3(rotationMat * glm::vec4(startTriC, 1.0));
+		AddTri(startTriA, startTriB, startTriC);
+	}
+
+	// GenerateCircle(a_fRadius, a_nSubdivisions, a_v3Color);
+	// float degRot = (float)(2 * PI / a_nSubdivisions);
+	 startTriA = vector3(0, 0, -a_fHeight/2);
+	 startTriB = vector3(-a_fRadius * sin(PI / (a_nSubdivisions)), -a_fRadius * cos(PI / (a_nSubdivisions)), -a_fHeight / 2);
+	 startTriC = vector3(a_fRadius*sin(PI / a_nSubdivisions), -a_fRadius * cos(PI / a_nSubdivisions), -a_fHeight / 2);
+
+	AddTri(startTriA, startTriC, startTriB);
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		glm::mat4 rotationMat(1);
+		float degRot = (float)(2 * PI / a_nSubdivisions);
+		rotationMat = glm::rotate(rotationMat, degRot, glm::vec3(0.0, 0.0, 1.0));
+		startTriA = glm::vec3(rotationMat * glm::vec4(startTriA, 1.0));
+		startTriB = glm::vec3(rotationMat * glm::vec4(startTriB, 1.0));
+		startTriC = glm::vec3(rotationMat * glm::vec4(startTriC, 1.0));
+		AddTri(startTriA, startTriC, startTriB);
+	}
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -300,7 +372,59 @@ void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisi
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	// circle1
+	float degRot = (float)(2 * PI / a_nSubdivisions);
+	vector3 startTriA = vector3(0, 0, -(a_fHeight / 2));
+	vector3 startTriB = vector3(-a_fRadius * sin(PI / (a_nSubdivisions)), -a_fRadius * cos(PI / (a_nSubdivisions)), -(a_fHeight / 2));
+	vector3 startTriC = vector3(a_fRadius*sin(PI / a_nSubdivisions), -a_fRadius * cos(PI / a_nSubdivisions), -(a_fHeight / 2));
+
+	AddTri(startTriA, startTriC, startTriB);
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		glm::mat4 rotationMat(1);
+		float degRot = (float)(2 * PI / a_nSubdivisions);
+		rotationMat = glm::rotate(rotationMat, degRot, glm::vec3(0.0, 0.0, 1.0));
+		startTriA = glm::vec3(rotationMat * glm::vec4(startTriA, 1.0));
+		startTriB = glm::vec3(rotationMat * glm::vec4(startTriB, 1.0));
+		startTriC = glm::vec3(rotationMat * glm::vec4(startTriC, 1.0));
+		AddTri(startTriA, startTriC, startTriB);
+	}
+
+	// circle2
+	startTriA = vector3(0, 0, a_fHeight / 2);
+	startTriB = vector3(-a_fRadius * sin(PI / (a_nSubdivisions)), -a_fRadius * cos(PI / (a_nSubdivisions)), a_fHeight / 2);
+	startTriC = vector3(a_fRadius*sin(PI / a_nSubdivisions), -a_fRadius * cos(PI / a_nSubdivisions), a_fHeight / 2);
+
+	AddTri(startTriA, startTriB, startTriC);
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		glm::mat4 rotationMat(1);
+		float degRot = (float)(2 * PI / a_nSubdivisions);
+		rotationMat = glm::rotate(rotationMat, degRot, glm::vec3(0.0, 0.0, 1.0));
+		startTriA = glm::vec3(rotationMat * glm::vec4(startTriA, 1.0));
+		startTriB = glm::vec3(rotationMat * glm::vec4(startTriB, 1.0));
+		startTriC = glm::vec3(rotationMat * glm::vec4(startTriC, 1.0));
+		AddTri(startTriA, startTriB, startTriC);
+	}
+
+	// rectangles
+	startTriA = vector3(-a_fRadius * sin(PI / (a_nSubdivisions)), -a_fRadius * cos(PI / (a_nSubdivisions)), -(a_fHeight / 2));
+	startTriB = vector3(a_fRadius*sin(PI / a_nSubdivisions), -a_fRadius * cos(PI / a_nSubdivisions), -(a_fHeight / 2));
+	startTriC = vector3(-a_fRadius * sin(PI / (a_nSubdivisions)), -a_fRadius * cos(PI / (a_nSubdivisions)), a_fHeight / 2);
+	vector3 startTriD = vector3(a_fRadius*sin(PI / a_nSubdivisions), -a_fRadius * cos(PI / a_nSubdivisions), a_fHeight / 2);
+	AddQuad(startTriA, startTriB, startTriC, startTriD);
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		glm::mat4 rotationMat(1);
+		float degRot = (float)(2 * PI / a_nSubdivisions);
+		rotationMat = glm::rotate(rotationMat, degRot, glm::vec3(0.0, 0.0, 1.0));
+		startTriA = glm::vec3(rotationMat * glm::vec4(startTriA, 1.0));
+		startTriB = glm::vec3(rotationMat * glm::vec4(startTriB, 1.0));
+		startTriC = glm::vec3(rotationMat * glm::vec4(startTriC, 1.0));
+		startTriD = glm::vec3(rotationMat * glm::vec4(startTriD, 1.0));
+		AddQuad(startTriA, startTriB, startTriC, startTriD);
+	}
+
 	// -------------------------------
 
 	// Adding information about color
@@ -330,7 +454,82 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
+	//generate top
+	float degRot = (float)(2 * PI / a_nSubdivisions);
+	vector3 startTriA = vector3(-a_fOuterRadius * sin(PI / (a_nSubdivisions)), -a_fOuterRadius * cos(PI / (a_nSubdivisions)), -(a_fHeight / 2));
+	vector3 startTriB = vector3(a_fOuterRadius*sin(PI / a_nSubdivisions), -a_fOuterRadius * cos(PI / a_nSubdivisions), -(a_fHeight / 2));
+	vector3 startTriC = vector3(-a_fInnerRadius * sin(PI / (a_nSubdivisions)), -a_fInnerRadius * cos(PI / (a_nSubdivisions)), -(a_fHeight / 2));
+	vector3 startTriD = vector3(a_fInnerRadius*sin(PI / a_nSubdivisions), -a_fInnerRadius * cos(PI / a_nSubdivisions), -(a_fHeight / 2));
+	AddQuad(startTriC, startTriD, startTriA, startTriB);
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		glm::mat4 rotationMat(1);
+		float degRot = (float)(2 * PI / a_nSubdivisions);
+		rotationMat = glm::rotate(rotationMat, degRot, glm::vec3(0.0, 0.0, 1.0));
+		startTriA = glm::vec3(rotationMat * glm::vec4(startTriA, 1.0));
+		startTriB = glm::vec3(rotationMat * glm::vec4(startTriB, 1.0));
+		startTriC = glm::vec3(rotationMat * glm::vec4(startTriC, 1.0));
+		startTriD = glm::vec3(rotationMat * glm::vec4(startTriD, 1.0));
+		AddQuad(startTriC, startTriD, startTriA, startTriB);
+
+
+	}
+	// generate bottom
+	degRot = (float)(2 * PI / a_nSubdivisions);
+	startTriA = vector3(-a_fOuterRadius * sin(PI / (a_nSubdivisions)), -a_fOuterRadius * cos(PI / (a_nSubdivisions)), (a_fHeight / 2));
+	startTriB = vector3(a_fOuterRadius*sin(PI / a_nSubdivisions), -a_fOuterRadius * cos(PI / a_nSubdivisions), (a_fHeight / 2));
+	startTriC = vector3(-a_fInnerRadius * sin(PI / (a_nSubdivisions)), -a_fInnerRadius * cos(PI / (a_nSubdivisions)), (a_fHeight / 2));
+	startTriD = vector3(a_fInnerRadius*sin(PI / a_nSubdivisions), -a_fInnerRadius * cos(PI / a_nSubdivisions), (a_fHeight / 2));
+
+	AddQuad(startTriA, startTriB, startTriC, startTriD);
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		glm::mat4 rotationMat(1);
+		float degRot = (float)(2 * PI / a_nSubdivisions);
+		rotationMat = glm::rotate(rotationMat, degRot, glm::vec3(0.0, 0.0, 1.0));
+		startTriA = glm::vec3(rotationMat * glm::vec4(startTriA, 1.0));
+		startTriB = glm::vec3(rotationMat * glm::vec4(startTriB, 1.0));
+		startTriC = glm::vec3(rotationMat * glm::vec4(startTriC, 1.0));
+		startTriD = glm::vec3(rotationMat * glm::vec4(startTriD, 1.0));
+		AddQuad(startTriA, startTriB, startTriC, startTriD);
+	}
+
+	//generate outer
+	startTriA = vector3(-a_fOuterRadius * sin(PI / (a_nSubdivisions)), -a_fOuterRadius * cos(PI / (a_nSubdivisions)), -(a_fHeight / 2));
+	startTriB = vector3(a_fOuterRadius*sin(PI / a_nSubdivisions), -a_fOuterRadius * cos(PI / a_nSubdivisions), -(a_fHeight / 2));
+	startTriC = vector3(-a_fOuterRadius * sin(PI / (a_nSubdivisions)), -a_fOuterRadius * cos(PI / (a_nSubdivisions)), (a_fHeight / 2));
+	startTriD = vector3(a_fOuterRadius*sin(PI / a_nSubdivisions), -a_fOuterRadius * cos(PI / a_nSubdivisions), (a_fHeight / 2));
+	AddQuad(startTriA, startTriB, startTriC, startTriD);
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		glm::mat4 rotationMat(1);
+		float degRot = (float)(2 * PI / a_nSubdivisions);
+		rotationMat = glm::rotate(rotationMat, degRot, glm::vec3(0.0, 0.0, 1.0));
+		startTriA = glm::vec3(rotationMat * glm::vec4(startTriA, 1.0));
+		startTriB = glm::vec3(rotationMat * glm::vec4(startTriB, 1.0));
+		startTriC = glm::vec3(rotationMat * glm::vec4(startTriC, 1.0));
+		startTriD = glm::vec3(rotationMat * glm::vec4(startTriD, 1.0));
+		AddQuad(startTriA, startTriB, startTriC, startTriD);
+	}
+	// generate inner
+	startTriA = vector3(-a_fInnerRadius * sin(PI / (a_nSubdivisions)), -a_fInnerRadius * cos(PI / (a_nSubdivisions)), -(a_fHeight / 2));
+	startTriB = vector3(a_fInnerRadius*sin(PI / a_nSubdivisions), -a_fInnerRadius * cos(PI / a_nSubdivisions), -(a_fHeight / 2));
+	startTriC = vector3(-a_fInnerRadius * sin(PI / (a_nSubdivisions)), -a_fInnerRadius * cos(PI / (a_nSubdivisions)), (a_fHeight / 2));
+	startTriD = vector3(a_fInnerRadius*sin(PI / a_nSubdivisions), -a_fInnerRadius * cos(PI / a_nSubdivisions), (a_fHeight / 2));
+	AddQuad(startTriC, startTriD, startTriA, startTriB);
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		glm::mat4 rotationMat(1);
+		float degRot = (float)(2 * PI / a_nSubdivisions);
+		rotationMat = glm::rotate(rotationMat, degRot, glm::vec3(0.0, 0.0, 1.0));
+		startTriA = glm::vec3(rotationMat * glm::vec4(startTriA, 1.0));
+		startTriB = glm::vec3(rotationMat * glm::vec4(startTriB, 1.0));
+		startTriC = glm::vec3(rotationMat * glm::vec4(startTriC, 1.0));
+		startTriD = glm::vec3(rotationMat * glm::vec4(startTriD, 1.0));
+		AddQuad(startTriC, startTriD, startTriA, startTriB);
+
+	}
+
 	// -------------------------------
 
 	// Adding information about color
@@ -380,14 +579,90 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 		GenerateCube(a_fRadius * 2.0f, a_v3Color);
 		return;
 	}
-	if (a_nSubdivisions > 6)
+	if (a_nSubdivisions > 100)
+	{
 		a_nSubdivisions = 6;
+	}
+		
 
 	Release();
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	// number of verticies in the sphere
+	int numberOfVertices = a_nSubdivisions * (a_nSubdivisions + 1) + 2;
+
+	// lists for verticies
+	vector3*  positions = new vector3[numberOfVertices];
+	vector2* texcoords = new vector2[numberOfVertices];
+
+	// north pole
+	positions[0] = vector3(0, a_fRadius, 0);
+	texcoords[0] = vector2(0, 1);
+
+	// south pole
+	positions[numberOfVertices - 1] = vector3(0, -a_fRadius, 0);
+	texcoords[numberOfVertices - 1] = vector2(0, 0);
+
+	// space between verticies
+	float latitudeSpacing = 1.0f / (a_nSubdivisions + 1.0f);
+	float longitudeSpacing = 1.0f / a_nSubdivisions;
+
+	int v = 1;
+
+	// create verticies
+	for (int latitude = 0; latitude < a_nSubdivisions; latitude++)
+	{
+		for (int longitude = 0; longitude <= a_nSubdivisions; longitude++)
+		{
+			texcoords[v] = vector2(longitude*longitudeSpacing, 1.0f - (latitude + 1)*latitudeSpacing);
+
+			float theta = texcoords[v].x * 2.0f*PI;
+			float phi = (texcoords[v].y - 0.5f)*PI;
+
+			float c = cos(phi);
+
+			// adds vertex to list
+			positions[v] = vector3(c*cos(theta), sin(phi), c*sin(theta))*a_fRadius;
+			v++;
+		}
+	}
+	// number of verticies in each section
+	int subSectionVerts = numberOfVertices / a_nSubdivisions;
+	// draw top
+	for (int i = 0; i < subSectionVerts; i++)
+	{
+		vector3 vertex1 = positions[0];
+		vector3 vertex2 = positions[i];
+		vector3 vertex3 = positions[i + 1];
+		AddTri(vertex1, vertex3, vertex2);
+	}
+	// draw mid sections
+	for (int i = 0; i < numberOfVertices - subSectionVerts - 1; i++)
+	{
+
+		vector3 vertex1 = positions[i];
+		vector3 vertex2 = positions[i + 1];
+		vector3 vertex3 = positions[i + subSectionVerts];
+		vector3 vertex4 = positions[i + subSectionVerts + 1];
+
+		// draw quads
+		AddQuad(vertex1, vertex2, vertex3, vertex4);
+		AddQuad(vertex3, vertex2, vertex1, vertex4);
+		AddQuad(vertex2, vertex4, vertex1, vertex3);
+		AddQuad(vertex4, vertex1, vertex2, vertex3);
+
+
+
+	}
+	// draw bottom
+	for (int i = numberOfVertices - subSectionVerts - 1; i < numberOfVertices; i++)
+	{
+		vector3 vertex1 = positions[numberOfVertices - 1];
+		vector3 vertex2 = positions[i];
+		vector3 vertex3 = positions[i + 1];
+		AddTri(vertex1, vertex2, vertex3);
+	}
 	// -------------------------------
 
 	// Adding information about color

@@ -151,6 +151,7 @@ public:
 	-	vector3 a_v3Color -> Color of the mesh
 	OUTPUT: ---
 	*/
+	void MyMesh::GenerateCircle(float a_fRadius, int a_nSubdivisions, vector3 a_v3Color);
 	void GenerateCube(float a_fSize, vector3 a_v3Color = C_WHITE);
 	/*
 	USAGE: Generates a cuboid
