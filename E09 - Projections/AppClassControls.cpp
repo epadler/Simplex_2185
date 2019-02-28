@@ -94,6 +94,7 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		break;
 	case sf::Keyboard::F2:
 		m_pCameraMngr->SetCameraMode(CAM_ORTHO_Z);
+		m_pCameraMngr->SetPositionTargetAndUpward(AXIS_Z * -10.0f, ZERO_V3, AXIS_Y);
 		break;
 	case sf::Keyboard::F3:
 		m_pCameraMngr->SetCameraMode(CAM_ORTHO_Y);
