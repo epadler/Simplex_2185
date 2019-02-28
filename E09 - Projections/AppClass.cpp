@@ -59,12 +59,15 @@ void Application::Display(void)
 		break;
 	case 2:
 		m_pCamera->ResetCamera();
-		m_pCameraMngr->SetPositionTargetAndUpward(vector3(0.0f, 0.0f, -10.0f), vector3(0.0f, 0.0f, 0.0f), vector3(0.0f, 1.0f, 0.0f));
+		m_pCameraMngr->SetPositionTargetAndUpward(v3Eye, v3Center + vector3(0.0f, 0.0f, -1.0f), v3Up);
 		m_pCamera->SetPerspective(false);
 		break;
 	case 3:
 		m_pCamera->ResetCamera();
-		m_pCameraMngr->SetPositionTargetAndUpward(vector3(0.0f, 10.0f, 0.0f), vector3(0.0f, 0.0f, 0.0f), vector3(1.0f, 0.0f, 0.0f));
+		v3Eye = vector3(0.0f, 1.0f, 0.0f);
+		v3Up = vector3(0.0f, 1.0f, 0.0f);
+		v3Center = v3Eye + vector3(0.0f, -1.0f, 0.0f);
+		m_pCameraMngr->SetPositionTargetAndUpward(v3Eye, v3Center, v3Up);
 		m_pCamera->SetPerspective(true);
 		break;
 	case 4:
