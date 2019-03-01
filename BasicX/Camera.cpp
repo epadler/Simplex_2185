@@ -268,6 +268,10 @@ void Camera::SetPositionTargetAndUpward(vector3 a_v3Position, vector3 a_v3Target
 	m_v3Forward = glm::normalize(m_v3Target - m_v3Position);
 	m_v3Rightward = glm::normalize(glm::cross(m_v3Forward, m_v3Upward));
 	CalculateProjection();
+	std::cout << "Position: " << m_v3Position.x << ", "  << m_v3Position.y << ", "<< m_v3Position.z << "\n";
+	std::cout << "Target: " << m_v3Target.x << ", " << m_v3Target.y << ", " << m_v3Target.z << "\n";
+	std::cout << "Up: " << m_v3Upward.x << ", " << m_v3Upward.y << ", " << m_v3Upward.z << "\n";
+
 }
 void Camera::ResetCamera(void)
 {
