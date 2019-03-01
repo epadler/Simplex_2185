@@ -28,6 +28,9 @@ class MyCamera
 
 	matrix4 m_m4View; //View matrix
 	matrix4 m_m4Projection; //Projection Matrix
+
+	vector3 forward = vector3(m_v3Target - m_v3Position);
+	vector3 right = cross(m_v3Above, forward);
 public:
 	/*
 	USAGE: Constructor
