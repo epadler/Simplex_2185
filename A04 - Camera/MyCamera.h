@@ -119,6 +119,9 @@ public:
 	*/
 	vector3 GetTarget(void);
 
+	void SetForward(vector3 a_v3Fwd);
+	vector3 GetForward(void);
+
 	/*
 	USAGE: Sets the position of the point above the camera
 	ARGUMENTS: vector3 a_v3Above -> The point that is above the camera position

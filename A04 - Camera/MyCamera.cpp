@@ -6,6 +6,14 @@ void Simplex::MyCamera::SetPosition(vector3 a_v3Position) { m_v3Position = a_v3P
 vector3 Simplex::MyCamera::GetPosition(void) { return m_v3Position; }
 void Simplex::MyCamera::SetTarget(vector3 a_v3Target) { m_v3Target = a_v3Target; }
 vector3 Simplex::MyCamera::GetTarget(void) { return m_v3Target; }
+void Simplex::MyCamera::SetForward(vector3 a_v3Fwd)
+{
+	forward = a_v3Fwd;
+}
+vector3 Simplex::MyCamera::GetForward(void)
+{
+	return forward;
+}
 void Simplex::MyCamera::SetAbove(vector3 a_v3Above) { m_v3Above = a_v3Above; }
 vector3 Simplex::MyCamera::GetAbove(void) { return m_v3Above; }
 void Simplex::MyCamera::SetPerspective(bool a_bPerspective) { m_bPerspective = a_bPerspective; }

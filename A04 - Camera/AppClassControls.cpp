@@ -433,6 +433,8 @@ void Application::ProcessJoystick(void)
 	if (fMultiplier)
 	{
 		m_qArcBall = quaternion(vector3(0.0f, 0.0f, glm::radians(m_pController[m_uActCont]->axis[SimplexAxis_POVX] / 20.0f))) * m_qArcBall;
+		m_pCamera->SetForward(m_pCamera->GetForward() * m_qArcBall);
+		m_pCamera->SetAbove(m_pCamera->GetAbove() * m_qArcBall);
 	}
 	else
 	{
