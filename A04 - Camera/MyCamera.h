@@ -135,7 +135,8 @@ public:
 	OUTPUT: position above the camera
 	*/
 	vector3 GetAbove(void);
-
+	void SetRight(vector3 a_v3Right);
+	vector3 GetRight(void);
 	/*
 	USAGE: Sets Perspective Camera
 	ARGUMENTS: bool a_bPerspective = true -> is camera perspective or orthographic

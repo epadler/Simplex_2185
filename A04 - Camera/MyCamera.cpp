@@ -16,6 +16,14 @@ vector3 Simplex::MyCamera::GetForward(void)
 }
 void Simplex::MyCamera::SetAbove(vector3 a_v3Above) { m_v3Above = a_v3Above; }
 vector3 Simplex::MyCamera::GetAbove(void) { return m_v3Above; }
+void Simplex::MyCamera::SetRight(vector3 a_v3Right)
+{
+	right = a_v3Right;
+}
+vector3 Simplex::MyCamera::GetRight(void)
+{
+	return right;
+}
 void Simplex::MyCamera::SetPerspective(bool a_bPerspective) { m_bPerspective = a_bPerspective; }
 void Simplex::MyCamera::SetFOV(float a_fFOV) { m_fFOV = a_fFOV; }
 void Simplex::MyCamera::SetResolution(vector2 a_v2Resolution) { m_v2Resolution = a_v2Resolution; }
@@ -161,16 +169,16 @@ void Simplex::MyCamera::CalculateProjectionMatrix(void)
 void MyCamera::MoveForward(float a_fDistance)
 {
 	//The following is just an example and does not take in account the forward vector (AKA view vector)
-	m_v3Position += a_fDistance * forward;
-	m_v3Target += a_fDistance * forward;
-	m_v3Above += a_fDistance * forward;
+	m_v3Position += -a_fDistance * forward;
+	m_v3Target += -a_fDistance * forward;
+	m_v3Above += -a_fDistance * forward;
 }
 
 void MyCamera::MoveVertical(float a_fDistance)
 {
-	m_v3Position += a_fDistance * m_v3Above;
-	m_v3Target += a_fDistance * m_v3Above;
-	m_v3Above += a_fDistance * m_v3Above;
+	m_v3Position += -a_fDistance * m_v3Above;
+	m_v3Target += -a_fDistance * m_v3Above;
+	m_v3Above += -a_fDistance * m_v3Above;
 }//Needs to be defined
 void MyCamera::MoveSideways(float a_fDistance)
 {
