@@ -31,6 +31,7 @@ class MyCamera
 
 	vector3 forward = vector3(m_v3Target - m_v3Position);
 	vector3 right = cross(m_v3Above, forward);
+	vector3 up = cross(right, forward);
 public:
 	/*
 	USAGE: Constructor
@@ -137,6 +138,8 @@ public:
 	vector3 GetAbove(void);
 	void SetRight(vector3 a_v3Right);
 	vector3 GetRight(void);
+	void SetUp(vector3 a_v3Right);
+	vector3 GetUp(void);
 	/*
 	USAGE: Sets Perspective Camera
 	ARGUMENTS: bool a_bPerspective = true -> is camera perspective or orthographic
