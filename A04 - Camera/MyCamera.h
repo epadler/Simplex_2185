@@ -29,9 +29,13 @@ class MyCamera
 	matrix4 m_m4View; //View matrix
 	matrix4 m_m4Projection; //Projection Matrix
 
+	// forward is where you are looking
 	vector3 forward = vector3(m_v3Target - m_v3Position);
+	// right is the cross with forward and the vector of what is above you
 	vector3 right = cross(m_v3Above, forward);
-	vector3 up = cross(right, forward);
+	// up is set up (0,0,value) by crossing the forward and right and will not change
+	// normalized to even out movement speed
+	vector3 up = normalize(cross(right, forward));
 public:
 	/*
 	USAGE: Constructor
@@ -120,6 +124,7 @@ public:
 	*/
 	vector3 GetTarget(void);
 
+	// get and set for forward vector
 	void SetForward(vector3 a_v3Fwd);
 	vector3 GetForward(void);
 
@@ -136,10 +141,15 @@ public:
 	OUTPUT: position above the camera
 	*/
 	vector3 GetAbove(void);
+
+	// get and set for right vector
 	void SetRight(vector3 a_v3Right);
 	vector3 GetRight(void);
+
+	// get and set for up vector
 	void SetUp(vector3 a_v3Right);
 	vector3 GetUp(void);
+
 	/*
 	USAGE: Sets Perspective Camera
 	ARGUMENTS: bool a_bPerspective = true -> is camera perspective or orthographic

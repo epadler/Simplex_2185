@@ -168,23 +168,25 @@ void Simplex::MyCamera::CalculateProjectionMatrix(void)
 	}
 }
 
+// move in the direction of the forward vector
 void MyCamera::MoveForward(float a_fDistance)
 {
-	//The following is just an example and does not take in account the forward vector (AKA view vector)
 	m_v3Position += -a_fDistance * forward;
 	m_v3Target += -a_fDistance * forward;
 	m_v3Above += -a_fDistance * forward;
 }
-
+// move up
+// the up vector never changes so it will always be in the same direction
 void MyCamera::MoveVertical(float a_fDistance)
 {
 	m_v3Position += -a_fDistance * up;
 	m_v3Target += -a_fDistance * up;
 	m_v3Above += -a_fDistance * up;
-}//Needs to be defined
+}
+// move in the direction of the right vector
 void MyCamera::MoveSideways(float a_fDistance)
 {
 	m_v3Position += a_fDistance * right;
 	m_v3Target += a_fDistance * right;
 	m_v3Above += a_fDistance * right;
-}//Needs to be defined
+}

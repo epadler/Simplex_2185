@@ -370,6 +370,7 @@ void Application::CameraRotation(float a_fSpeed)
 		fDeltaMouse = static_cast<float>(MouseY - CenterY);
 		fAngleX += fDeltaMouse * a_fSpeed;
 	}
+	// limits the vertical rotation to prevent Gimbal lock
 	if (fAngleY > 80.0f)
 	{
 		fAngleY = 80.0f;
@@ -378,17 +379,22 @@ void Application::CameraRotation(float a_fSpeed)
 	{
 		fAngleY = -80.0f;
 	}
+
 	//Change the Yaw and the Pitch of the camera
 	SetCursorPos(CenterX, CenterY);//Position the mouse in the center
+
+	// quaternions for rotating the camera
 	quaternion axisX = glm::angleAxis(fAngleX, AXIS_X);
 	quaternion axisY = glm::angleAxis(fAngleY, AXIS_Y);
 
+	// rotate the forward to the correct angle
 	m_pCamera->SetForward(normalize(m_pCamera->GetForward() * axisX));
 	m_pCamera->SetForward(normalize(m_pCamera->GetForward() * axisY));
 
-	
+	// reset the right equal to the cross between the forward and up vector
 	m_pCamera->SetRight(normalize(glm::cross(m_pCamera->GetForward(), m_pCamera->GetUp())));
 
+	// resets the target to the correct value
 	m_pCamera->SetTarget(m_pCamera->GetForward() + m_pCamera->GetPosition());
 
 }
@@ -406,17 +412,22 @@ void Application::ProcessKeyboard(void)
 
 	if (fMultiplier)
 		fSpeed *= 5.0f;
-
+	// move forward
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		m_pCamera->MoveForward(-fSpeed);
+	// move backward
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 		m_pCamera->MoveForward(fSpeed);
+	// move left
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 		m_pCamera->MoveSideways(fSpeed);
+	// move right
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		m_pCamera->MoveSideways(-fSpeed);
+	// move up
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 		m_pCamera->MoveVertical(fSpeed);
+	// move down
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 		m_pCamera->MoveVertical(-fSpeed);
 #pragma endregion
