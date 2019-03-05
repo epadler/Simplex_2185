@@ -98,6 +98,15 @@
     <ClInclude Include="MyRigidBody.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\imgui\stb_rect_pack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\imgui\stb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\imgui\stb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\res\BTO.rc">

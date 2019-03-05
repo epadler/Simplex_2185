@@ -117,6 +117,9 @@ xcopy "$(SolutionDir)include\Simplex\Shaders" "$(SolutionDir)_Binary\Shaders" /y
     <ClInclude Include="..\include\imgui\imgui.h" />
     <ClInclude Include="..\include\imgui\ImGuiObject.h" />
     <ClInclude Include="..\include\imgui\imgui_internal.h" />
+    <ClInclude Include="..\include\imgui\stb_rect_pack.h" />
+    <ClInclude Include="..\include\imgui\stb_textedit.h" />
+    <ClInclude Include="..\include\imgui\stb_truetype.h" />
     <ClInclude Include="..\res\resource.h" />
     <ClInclude Include="AppClass.h" />
     <ClInclude Include="ControllerConfiguration.h" />
