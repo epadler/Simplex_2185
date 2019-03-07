@@ -75,7 +75,7 @@ public:
 	ARGUMENTS: ---
 	OUTPUT: ---
 	*/
-	void AddToRenderList(void);
+	void AddToRenderList();
 
 	/*
 	USAGE: Clears the colliding list

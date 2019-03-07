@@ -145,12 +145,38 @@ MyRigidBody& MyRigidBody::operator=(MyRigidBody const& other)
 MyRigidBody::~MyRigidBody(){Release();};
 
 //--- Non Standard Singleton Methods
-void MyRigidBody::AddToRenderList(void)
+void MyRigidBody::AddToRenderList(std::vector<vector3> a_pointList)
 {
 	if (!m_bVisible)
 		return;
 
 	m_pMeshMngr->AddWireSphereToRenderList(glm::translate(m_m4ToWorld, m_v3Center) * glm::scale(vector3(m_fRadius)), m_v3Color, RENDER_WIRE);
+	uint uPointCount = a_pointList.size();
+
+	if (uPointCount < 3)
+		return;
+
+	m_v3MinL = m_v3MaxL = a_pointList[0];
+	for (uint i = 1; i < uPointCount; ++i)
+	{
+		if (m_v3MinL.x > a_pointList[i].x)
+			m_v3MinL.x = a_pointList[i].x;
+
+		else if (m_v3MaxL.x < a_pointList[i].x)
+			m_v3MaxL.x = a_pointList[i].x;
+
+		if (m_v3MinL.y > a_pointList[i].y)
+			m_v3MinL.y = a_pointList[i].y;
+
+		else if (m_v3MaxL.y < a_pointList[i].y)
+			m_v3MaxL.y = a_pointList[i].y;
+
+		if (m_v3MinL.z > a_pointList[i].z)
+			m_v3MinL.z = a_pointList[i].z;
+
+		else if (m_v3MaxL.z < a_pointList[i].z)
+			m_v3MaxL.z = a_pointList[i].z;
+	}
 	m_pMeshMngr->AddWireCubeToRenderList(glm::translate(m_m4ToWorld, m_v3Center) * glm::scale(m_v3HalfWidth * 2.0f), C_BLUE, RENDER_WIRE);
 }
 bool MyRigidBody::IsColliding(MyRigidBody* const other)

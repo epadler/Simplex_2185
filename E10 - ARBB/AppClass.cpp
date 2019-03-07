@@ -52,6 +52,7 @@ void Application::Update(void)
 	
 	m_pCreeper->AddToRenderList();
 	m_pCreeperRB->AddToRenderList();
+	
 
 	m_pSteve->AddToRenderList();
 	m_pSteveRB->AddToRenderList();

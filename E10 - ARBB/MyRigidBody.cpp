@@ -87,6 +87,35 @@ void MyRigidBody::SetModelMatrix(matrix4 a_m4ModelMatrix)
 	//your code goes here---------------------
 	m_v3MinG = m_v3MinL;
 	m_v3MaxG = m_v3MaxL;
+
+	// vector3 max = vector3();
+	// vector3 min = vector3();
+
+	std::vector<vector3> listVecs;
+	listVecs.push_back(vector3(m_m4ToWorld * vector4(m_v3MaxG.x, m_v3MaxG.y, m_v3MaxG.z, 1)));
+	listVecs.push_back(vector3(m_m4ToWorld * vector4(m_v3MinG.x, m_v3MaxG.y, m_v3MaxG.z, 1)));
+	listVecs.push_back(vector3(m_m4ToWorld * vector4(m_v3MinG.x, m_v3MinG.y, m_v3MaxG.z, 1)));
+	listVecs.push_back(vector3(m_m4ToWorld * vector4(m_v3MaxG.x, m_v3MinG.y, m_v3MaxG.z, 1)));
+	listVecs.push_back(vector3(m_m4ToWorld * vector4(m_v3MinG.x, m_v3MaxG.y, m_v3MinG.z, 1)));
+	listVecs.push_back(vector3(m_m4ToWorld * vector4(m_v3MinG.x, m_v3MinG.y, m_v3MinG.z, 1)));
+	listVecs.push_back(vector3(m_m4ToWorld * vector4(m_v3MaxG.x, m_v3MinG.y, m_v3MinG.z, 1)));
+
+	m_v3MaxG = m_v3MinG = listVecs[0];
+
+	//Get the max and min out of the list
+	for (uint i = 1; i < 7; ++i)
+	{
+		if (m_v3MaxG.x < listVecs[i].x) m_v3MaxG.x = listVecs[i].x;
+		else if (m_v3MinG.x > listVecs[i].x) m_v3MinG.x = listVecs[i].x;
+
+		if (m_v3MaxG.y < listVecs[i].y) m_v3MaxG.y = listVecs[i].y;
+		else if (m_v3MinG.y > listVecs[i].y) m_v3MinG.y = listVecs[i].y;
+
+		if (m_v3MaxG.z < listVecs[i].z) m_v3MaxG.z = listVecs[i].z;
+		else if (m_v3MinG.z > listVecs[i].z) m_v3MinG.z = listVecs[i].z;
+	}
+
+	// m_v3ARBBSize = max - min;
 	//----------------------------------------
 
 	//we calculate the distance between min and max vectors
@@ -197,7 +226,7 @@ bool MyRigidBody::IsColliding(MyRigidBody* const other)
 {
 	//check if spheres are colliding
 	bool bColliding = true;
-	//bColliding = (glm::distance(GetCenterGlobal(), other->GetCenterGlobal()) < m_fRadius + other->m_fRadius);
+	// bColliding = (glm::distance(GetCenterGlobal(), other->GetCenterGlobal()) < m_fRadius + other->m_fRadius);
 	//if they are check the Axis Aligned Bounding Box
 	if (bColliding) //they are colliding with bounding sphere
 	{
@@ -235,7 +264,7 @@ bool MyRigidBody::IsColliding(MyRigidBody* const other)
 	return bColliding;
 }
 
-void MyRigidBody::AddToRenderList(void)
+void MyRigidBody::AddToRenderList()
 {
 	if (m_bVisibleBS)
 	{
