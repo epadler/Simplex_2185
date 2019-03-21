@@ -287,7 +287,7 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 	// Compute translation vector t
 	glm::vec3 t = a_pOther->GetCenterGlobal() - this->GetCenterGlobal();
 	// Bring translation into a's coordinate frame
-	t = glm::vec3(t * this->GetHalfWidth()[0], t * this->GetHalfWidth()[1], t * this->GetHalfWidth()[2]);
+	t = glm::vec3(dot(t, (glm::vec3)this->GetModelMatrix()[0]), dot(t, (glm::vec3)this->GetHalfWidth()[1]), dot(t, (glm::vec3)this->GetHalfWidth()[2]));
 
 	// Compute common subexpressions. Add in an epsilon term to
 	// counteract arithmetic errors when two edges are parallel and
@@ -300,25 +300,25 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 	for (int i = 0; i < 3; i++) {
 		ra = this->GetHalfWidth()[i];
 		rb = a_pOther->GetHalfWidth()[0] * AbsR[i][0] + a_pOther->GetHalfWidth()[1] * AbsR[i][1] + a_pOther->GetHalfWidth()[2] * AbsR[i][2];
-		if (abs(t[i]) > ra + rb) return 0;
+		if (abs(t[i]) > ra + rb) return eSATResults::SAT_NONE;
 	}
 
 	// Test axes L = B0, L = B1, L = B2
 	for (int i = 0; i < 3; i++) {
 		ra = this->GetHalfWidth()[0] * AbsR[0][i] + this->GetHalfWidth()[1] * AbsR[1][i] + this->GetHalfWidth()[2] * AbsR[2][i];
 		rb = a_pOther->GetHalfWidth()[i];
-		if (abs(t[0] * R[0][i] + t[1] * R[1][i] + t[2] * R[2][i]) > ra + rb) return 0;
+		if (abs(t[0] * R[0][i] + t[1] * R[1][i] + t[2] * R[2][i]) > ra + rb) return eSATResults::SAT_NONE;
 	}
 
 	// Test axis L = A0 x B0
 	ra = this->GetHalfWidth()[1] * AbsR[2][0] + this->GetHalfWidth()[2] * AbsR[1][0];
 	rb = a_pOther->GetHalfWidth()[1] * AbsR[0][2] + a_pOther->GetHalfWidth()[2] * AbsR[0][1];
-	if (abs(t[2] * R[1][0] - t[1] * R[2][0]) > ra + rb) return 0;
+	if (abs(t[2] * R[1][0] - t[1] * R[2][0]) > ra + rb) return eSATResults::SAT_NONE;
 
 	// Test axis L = A0 x B1
 	ra = this->GetHalfWidth()[1] * AbsR[2][1] + this->GetHalfWidth()[2] * AbsR[1][1];
 	rb = a_pOther->GetHalfWidth()[0] * AbsR[0][2] + a_pOther->GetHalfWidth()[2] * AbsR[0][0];
-	if (abs(t[2] * R[1][1] - t[1] * R[2][1]) > ra + rb) return 0;
+	if (abs(t[2] * R[1][1] - t[1] * R[2][1]) > ra + rb) return eSATResults::SAT_NONE;
 
 	// Test axis L = A0 x B2
 	ra = this->GetHalfWidth()[1] * AbsR[2][2] + this->GetHalfWidth()[2] * AbsR[1][2];
@@ -329,32 +329,32 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 	ra = this->GetHalfWidth()[0] * AbsR[2][0] + this->GetHalfWidth()[2] * AbsR[0][0];
 	rb = a_pOther->GetHalfWidth()[1] * AbsR[1][2] + a_pOther->GetHalfWidth()[2] * AbsR[1][1];
 
-	if (abs(t[0] * R[2][0] - t[2] * R[0][0]) > ra + rb) return 0;
+	if (abs(t[0] * R[2][0] - t[2] * R[0][0]) > ra + rb) return eSATResults::SAT_NONE;
 
 	// Test axis L = A1 x B1
 	ra = this->GetHalfWidth()[0] * AbsR[2][1] + this->GetHalfWidth()[2] * AbsR[0][1];
 	rb = a_pOther->GetHalfWidth()[0] * AbsR[1][2] + a_pOther->GetHalfWidth()[2] * AbsR[1][0];
-	if (abs(t[0] * R[2][1] - t[2] * R[0][1]) > ra + rb) return 0;
+	if (abs(t[0] * R[2][1] - t[2] * R[0][1]) > ra + rb) return eSATResults::SAT_NONE;
 
 	// Test axis L = A1 x B2
 	ra = this->GetHalfWidth()[0] * AbsR[2][2] + this->GetHalfWidth()[2] * AbsR[0][2];
 	rb = a_pOther->GetHalfWidth()[0] * AbsR[1][1] + a_pOther->GetHalfWidth()[1] * AbsR[1][0];
-	if (abs(t[0] * R[2][2] - t[2] * R[0][2]) > ra + rb) return 0;
+	if (abs(t[0] * R[2][2] - t[2] * R[0][2]) > ra + rb) return eSATResults::SAT_NONE;
 
 	// Test axis L = A2 x B0
 	ra = this->GetHalfWidth()[0] * AbsR[1][0] + this->GetHalfWidth()[1] * AbsR[0][0];
 	rb = a_pOther->GetHalfWidth()[1] * AbsR[2][2] + a_pOther->GetHalfWidth()[2] * AbsR[2][1];
-	if (abs(t[1] * R[0][0] - t[0] * R[1][0]) > ra + rb) return 0;
+	if (abs(t[1] * R[0][0] - t[0] * R[1][0]) > ra + rb) return eSATResults::SAT_NONE;
 
 	// Test axis L = A2 x B1
 	ra = this->GetHalfWidth()[0] * AbsR[1][1] + this->GetHalfWidth()[1] * AbsR[0][1];
 	rb = a_pOther->GetHalfWidth()[0] * AbsR[2][2] + a_pOther->GetHalfWidth()[2] * AbsR[2][0];
-	if (abs(t[1] * R[0][1] - t[0] * R[1][1]) > ra + rb) return 0;
+	if (abs(t[1] * R[0][1] - t[0] * R[1][1]) > ra + rb) return eSATResults::SAT_NONE;
 
 	// Test axis L = A2 x B2
 	ra = this->GetHalfWidth()[0] * AbsR[1][2] + this->GetHalfWidth()[1] * AbsR[0][2];
 	rb = a_pOther->GetHalfWidth()[0] * AbsR[2][1] + a_pOther->GetHalfWidth()[1] * AbsR[2][0];
-	if (abs(t[1] * R[0][2] - t[0] * R[1][2]) > ra + rb) return 0;
+	if (abs(t[1] * R[0][2] - t[0] * R[1][2]) > ra + rb) return eSATResults::SAT_NONE;
 
 	// Since no separating axis is found, the OBBs must be intersecting
 	return 1;
@@ -370,5 +370,5 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 	*/
 
 	//there is no axis test that separates this two objects
-	return eSATResults::SAT_NONE;
+	// return eSATResults::SAT_NONE;
 }
