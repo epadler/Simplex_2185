@@ -282,7 +282,7 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 	// Compute rotation matrix expressing b in a's coordinate frame
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			R[i][j] = this->GetModelMatrix()[i] * a_pOther->GetModelMatrix()[j];
+			R[i][j] = dot(this->GetModelMatrix()[i], a_pOther->GetModelMatrix()[j]);
 
 	// Compute translation vector t
 	glm::vec3 t = a_pOther->GetCenterGlobal() - this->GetCenterGlobal();
