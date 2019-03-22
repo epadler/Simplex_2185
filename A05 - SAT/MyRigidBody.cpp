@@ -276,99 +276,95 @@ void MyRigidBody::AddToRenderList(void)
 
 uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 {
+	// radius of the rigid bodies
 	float ra, rb;
+	// matricies for positioning
 	glm::mat3x3 R, AbsR;
 
-	// Compute rotation matrix expressing b in a's coordinate frame
+	// this body's local x,y,z
+	std::vector<glm::vec3> au;
+	au.push_back(glm::vec3(this->GetModelMatrix()[0][0], this->GetModelMatrix()[0][1], this->GetModelMatrix()[0][2]));
+	au.push_back(glm::vec3(this->GetModelMatrix()[1][0], this->GetModelMatrix()[1][1], this->GetModelMatrix()[1][2]));
+	au.push_back(glm::vec3(this->GetModelMatrix()[2][0], this->GetModelMatrix()[2][1], this->GetModelMatrix()[2][2]));
+
+	// other body's local x,y,z
+	std::vector<glm::vec3> bu;
+	bu.push_back(glm::vec3(a_pOther->GetModelMatrix()[0][0], a_pOther->GetModelMatrix()[0][1], a_pOther->GetModelMatrix()[0][2]));
+	bu.push_back(glm::vec3(a_pOther->GetModelMatrix()[1][0], a_pOther->GetModelMatrix()[1][1], a_pOther->GetModelMatrix()[1][2]));
+	bu.push_back(glm::vec3(a_pOther->GetModelMatrix()[2][0], a_pOther->GetModelMatrix()[2][1], a_pOther->GetModelMatrix()[2][2]));
+
+	// compute other body's position in relation to this one's
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			R[i][j] = dot(this->GetModelMatrix()[i], a_pOther->GetModelMatrix()[j]);
+			R[i][j] = dot(au[i], bu[j]);
 
-	// Compute translation vector t
+	// distance between them
 	glm::vec3 t = a_pOther->GetCenterGlobal() - this->GetCenterGlobal();
-	// Bring translation into a's coordinate frame
-	t = glm::vec3(dot(t, (glm::vec3)this->GetModelMatrix()[0]), dot(t, (glm::vec3)this->GetHalfWidth()[1]), dot(t, (glm::vec3)this->GetHalfWidth()[2]));
+	// translate this into local space of this body
+	t = glm::vec3(dot(t, au[0]), dot(t, au[1]), dot(t, au[2]));
 
-	// Compute common subexpressions. Add in an epsilon term to
-	// counteract arithmetic errors when two edges are parallel and
-	// their cross product is (near) null (see text for details)
+	// actual radial measure
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
 			AbsR[i][j] = abs(R[i][j]) + FLT_EPSILON;
 
-	// Test axes L = A0, L = A1, L = A2
+	// Tests this body's x,y,z axis
 	for (int i = 0; i < 3; i++) {
 		ra = this->GetHalfWidth()[i];
 		rb = a_pOther->GetHalfWidth()[0] * AbsR[i][0] + a_pOther->GetHalfWidth()[1] * AbsR[i][1] + a_pOther->GetHalfWidth()[2] * AbsR[i][2];
-		if (abs(t[i]) > ra + rb) return eSATResults::SAT_NONE;
+		if (abs(t[i]) > ra + rb) return 1; // not intersecting
 	}
-
-	// Test axes L = B0, L = B1, L = B2
+	// Tests other body's x,y,z axis
 	for (int i = 0; i < 3; i++) {
 		ra = this->GetHalfWidth()[0] * AbsR[0][i] + this->GetHalfWidth()[1] * AbsR[1][i] + this->GetHalfWidth()[2] * AbsR[2][i];
 		rb = a_pOther->GetHalfWidth()[i];
-		if (abs(t[0] * R[0][i] + t[1] * R[1][i] + t[2] * R[2][i]) > ra + rb) return eSATResults::SAT_NONE;
+		if (abs(t[0] * R[0][i] + t[1] * R[1][i] + t[2] * R[2][i]) > ra + rb) return 1; // not intersecting
 	}
-
-	// Test axis L = A0 x B0
+	// Tests dot product of both X axis
 	ra = this->GetHalfWidth()[1] * AbsR[2][0] + this->GetHalfWidth()[2] * AbsR[1][0];
 	rb = a_pOther->GetHalfWidth()[1] * AbsR[0][2] + a_pOther->GetHalfWidth()[2] * AbsR[0][1];
-	if (abs(t[2] * R[1][0] - t[1] * R[2][0]) > ra + rb) return eSATResults::SAT_NONE;
+	if (abs(t[2] * R[1][0] - t[1] * R[2][0]) > ra + rb) return 1; // not intersecting
 
-	// Test axis L = A0 x B1
+	// Tests dot product of this X axis and other's Y axis
 	ra = this->GetHalfWidth()[1] * AbsR[2][1] + this->GetHalfWidth()[2] * AbsR[1][1];
 	rb = a_pOther->GetHalfWidth()[0] * AbsR[0][2] + a_pOther->GetHalfWidth()[2] * AbsR[0][0];
-	if (abs(t[2] * R[1][1] - t[1] * R[2][1]) > ra + rb) return eSATResults::SAT_NONE;
+	if (abs(t[2] * R[1][1] - t[1] * R[2][1]) > ra + rb) return 1; // not intersecting
 
-	// Test axis L = A0 x B2
+	// Tests dot product of this X axis and other's Y
 	ra = this->GetHalfWidth()[1] * AbsR[2][2] + this->GetHalfWidth()[2] * AbsR[1][2];
 	rb = a_pOther->GetHalfWidth()[0] * AbsR[0][1] + a_pOther->GetHalfWidth()[1] * AbsR[0][0];
-	if (abs(t[2] * R[1][2] - t[1] * R[2][2]) > ra + rb) return 0;
+	if (abs(t[2] * R[1][2] - t[1] * R[2][2]) > ra + rb) return 1; // not intersecting
 
-	// Test axis L = A1 x B0
+	// Tests dot product of this Y axis and other's Y
 	ra = this->GetHalfWidth()[0] * AbsR[2][0] + this->GetHalfWidth()[2] * AbsR[0][0];
 	rb = a_pOther->GetHalfWidth()[1] * AbsR[1][2] + a_pOther->GetHalfWidth()[2] * AbsR[1][1];
+	if (abs(t[0] * R[2][0] - t[2] * R[0][0]) > ra + rb) return 1; // not intersecting
 
-	if (abs(t[0] * R[2][0] - t[2] * R[0][0]) > ra + rb) return eSATResults::SAT_NONE;
-
-	// Test axis L = A1 x B1
+	// Tests dot product of this Y axis and other's Y
 	ra = this->GetHalfWidth()[0] * AbsR[2][1] + this->GetHalfWidth()[2] * AbsR[0][1];
 	rb = a_pOther->GetHalfWidth()[0] * AbsR[1][2] + a_pOther->GetHalfWidth()[2] * AbsR[1][0];
-	if (abs(t[0] * R[2][1] - t[2] * R[0][1]) > ra + rb) return eSATResults::SAT_NONE;
+	if (abs(t[0] * R[2][1] - t[2] * R[0][1]) > ra + rb) return 1; // not intersecting
 
-	// Test axis L = A1 x B2
+	// Tests dot product of this Y axis and other's Z
 	ra = this->GetHalfWidth()[0] * AbsR[2][2] + this->GetHalfWidth()[2] * AbsR[0][2];
 	rb = a_pOther->GetHalfWidth()[0] * AbsR[1][1] + a_pOther->GetHalfWidth()[1] * AbsR[1][0];
-	if (abs(t[0] * R[2][2] - t[2] * R[0][2]) > ra + rb) return eSATResults::SAT_NONE;
+	if (abs(t[0] * R[2][2] - t[2] * R[0][2]) > ra + rb) return 1; // not intersecting
 
-	// Test axis L = A2 x B0
+	// Tests dot product of this Y axis and other's X
 	ra = this->GetHalfWidth()[0] * AbsR[1][0] + this->GetHalfWidth()[1] * AbsR[0][0];
 	rb = a_pOther->GetHalfWidth()[1] * AbsR[2][2] + a_pOther->GetHalfWidth()[2] * AbsR[2][1];
-	if (abs(t[1] * R[0][0] - t[0] * R[1][0]) > ra + rb) return eSATResults::SAT_NONE;
+	if (abs(t[1] * R[0][0] - t[0] * R[1][0]) > ra + rb) return 1; // not intersecting
 
-	// Test axis L = A2 x B1
+	// Tests dot product of this Z axis and other's Y
 	ra = this->GetHalfWidth()[0] * AbsR[1][1] + this->GetHalfWidth()[1] * AbsR[0][1];
 	rb = a_pOther->GetHalfWidth()[0] * AbsR[2][2] + a_pOther->GetHalfWidth()[2] * AbsR[2][0];
-	if (abs(t[1] * R[0][1] - t[0] * R[1][1]) > ra + rb) return eSATResults::SAT_NONE;
+	if (abs(t[1] * R[0][1] - t[0] * R[1][1]) > ra + rb) return 1; // not intersecting
 
-	// Test axis L = A2 x B2
+	// Tests dot product of this Z axis and other's Z
 	ra = this->GetHalfWidth()[0] * AbsR[1][2] + this->GetHalfWidth()[1] * AbsR[0][2];
 	rb = a_pOther->GetHalfWidth()[0] * AbsR[2][1] + a_pOther->GetHalfWidth()[1] * AbsR[2][0];
-	if (abs(t[1] * R[0][2] - t[0] * R[1][2]) > ra + rb) return eSATResults::SAT_NONE;
+	if (abs(t[1] * R[0][2] - t[0] * R[1][2]) > ra + rb) return 1; // not intersecting
 
 	// Since no separating axis is found, the OBBs must be intersecting
-	return 1;
-	/*
-	Your code goes here instead of this comment;
-
-	For this method, if there is an axis that separates the two objects
-	then the return will be different than 0; 1 for any separating axis
-	is ok if you are not going for the extra credit, if you could not
-	find a separating axis you need to return 0, there is an enum in
-	Simplex that might help you [eSATResults] feel free to use it.
-	(eSATResults::SAT_NONE has a value of 0)
-	*/
-
-	//there is no axis test that separates this two objects
-	// return eSATResults::SAT_NONE;
+	return 0;
 }
