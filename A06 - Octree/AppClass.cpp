@@ -34,6 +34,8 @@ void Application::InitVariables(void)
 }
 void Application::Update(void)
 {
+	CalculateTree(m_pEntityMngr, m_uObjects);
+	m_pMeshMngr->AddWireCubeToRenderList(glm::translate(vector3(0, 0, 0)) * glm::scale(vector3(2)), C_YELLOW);
 	//Update the system so it knows how much time has passed since the last call
 	m_pSystem->Update();
 
@@ -55,7 +57,7 @@ void Application::Display(void)
 	ClearScreen();
 
 	//display octree
-	//m_pRoot->Display();
+	// m_pRoot->Display();
 	
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
@@ -76,4 +78,14 @@ void Application::Release(void)
 {
 	//release GUI
 	ShutdownGUI();
+}
+
+void CalculateTree(MyEntityManager* manager, uint numObjs)
+{
+	float maxX = manager->GetEntity(0)->GetRigidBody()->GetMaxGlobal().x;
+	float minX ;
+	for (int i = 0; i < numObjs; i++)
+	{
+		manager->GetEntity(i);
+	}
 }
