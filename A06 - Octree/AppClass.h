@@ -146,6 +146,7 @@ private:
 	OUTPUT: ---
 	*/
 	void Update(void);
+	
 	/*
 	USAGE: Displays the scene
 	ARGUMENTS: ---

@@ -29,6 +29,8 @@ void Simplex::MyEntity::Init(void)
 	m_m4ToWorld = IDENTITY_M4;
 	m_sUniqueID = "";
 	m_nDimensionCount = 0;
+
+	m_uMainDimension = 0;
 }
 void Simplex::MyEntity::Swap(MyEntity& other)
 {
