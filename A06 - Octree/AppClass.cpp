@@ -30,7 +30,7 @@ void Application::InitVariables(void)
 			m_pEntityMngr->SetModelMatrix(m4Position);
 			// m_pEntityMngr->AddDimension(-1, uIndex);
 			// ++uIndex;
-			if (v3Position.x < 0.0f)
+			/*if (v3Position.x < 0.0f)
 			{
 				if (v3Position.x < -17.0f)
 					m_pEntityMngr->AddDimension(-1, 1);
@@ -43,7 +43,7 @@ void Application::InitVariables(void)
 					m_pEntityMngr->AddDimension(-1, 3);
 				else
 					m_pEntityMngr->AddDimension(-1, 4);
-			}
+			}*/
 		}
 	}
 	m_uOctantLevels = 1;
@@ -51,20 +51,8 @@ void Application::InitVariables(void)
 	m_pEntityMngr->Update();
 }
 
-void CalculateTree(MyEntityManager* manager, uint numObjs)
-{
-	float maxX = manager->GetEntity(0)->GetRigidBody()->GetMaxGlobal().x;
-	float minX;
-	int a = numObjs;
-	for (int i = 0; i < a; i++)
-	{
-		manager->GetEntity(i);
-	}
-}
 void Application::Update(void)
 {
-	CalculateTree(m_pEntityMngr, m_uObjects);
-	m_pMeshMngr->AddWireCubeToRenderList(glm::translate(vector3(0, 0, 0)) * glm::scale(vector3(2)), C_YELLOW);
 	//Update the system so it knows how much time has passed since the last call
 	m_pSystem->Update();
 
@@ -86,7 +74,10 @@ void Application::Display(void)
 	ClearScreen();
 
 	//display octree
-	// m_pRoot->Display();
+	if (m_uOctantID == -1)
+		m_pRoot->Display();
+	else
+		m_pRoot->Display(m_uOctantID);
 	
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
@@ -105,6 +96,7 @@ void Application::Display(void)
 }
 void Application::Release(void)
 {
+	SafeDelete(m_pRoot);
 	//release GUI
 	ShutdownGUI();
 }

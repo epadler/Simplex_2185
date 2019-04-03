@@ -4,35 +4,89 @@ namespace Simplex
 {
 	class MyOctant
 	{
+		// typedef MyEntity* PEntity; //MyEntity Pointer
+
+		static uint m_uOctantCount;
+		static uint m_uMaxLevel;
+		static uint m_uIdealEntityCount;
+
+		uint m_uID = 0;
+		uint m_uLevel = 0;
+		uint m_uChildren = 0;
+
+		float m_fSize = 0.0f;
+
+		MeshManager* m_pMeshMngr = nullptr;
+		MyEntityManager* m_pEntityMngr = nullptr;
+		
+		
+		vector3 m_v3Center = vector3(0.0f);
+		vector3 m_v3Min = vector3(0.0f);
+		vector3 m_v3Max = vector3(0.0f);
+
+		MyOctant* m_pRoot = nullptr;
+
+		MyOctant* m_pParent = nullptr;
+		MyOctant* m_pChild[8];
+
+		std::vector<MyOctant*> m_lChild;
+
+		std::vector<uint> m_EntityList;
 	public:
-		MyOctant();
+		MyOctant(uint a_nMaxLevel = 2, uint a_IdealEntityCount = 5);
+
+		MyOctant(vector3 a_v3Center, float a_fSize);
+
+		MyOctant(MyOctant const& other);
+
+		MyOctant& operator=(MyOctant const& other);
+
+		void Swap(MyOctant& other);
+		
+		float GetSize(void);
+
+		vector3 GetCenterGlobal(void);
+
+		vector3 GetMinGlobal(void);
+
+		vector3 GetMaxGlobal(void);
+
+		bool IsColliding(uint a_uRBIIndex);
+
+		void Display(uint a_nIndex, vector3 a_v3Color = C_YELLOW);
+		void Display(vector3 a_v3Color = C_YELLOW);
+		void DisplayLeafs(vector3 a_v3Color = C_YELLOW);
+
+		void ClearEntityList(void);
+
+		void Subdivide(void);
+
+		MyOctant* GetChild(uint a_nChild);
+
+		MyOctant* GetParent(void);
+
+		bool IsLeaf(void);
+
+		bool ContainsMoreThan(uint a_nEntities);
+
+		void KillBranches(void);
+
+		void ConstructTree(uint a_nMaxLevel = 3);
+
+		void AssignIDtoEntity(void);
+
+		uint GetOctantCount(void);
+
+		// MyOctant();
 		~MyOctant();
 
-		typedef MyRigidBody* PRigidBody; //Entity Pointer
+	private:
+		void Release(void);
 
+		void Init(void);
 
-		vector3 origin;
-		int length;
-
-		vector3 m_v3CenterL = ZERO_V3; //center point in local space
-		vector3 m_v3CenterG = ZERO_V3; //center point in global space
-
-		vector3 m_v3MinL = ZERO_V3; //minimum coordinate in local space (for OBB)
-		vector3 m_v3MaxL = ZERO_V3; //maximum coordinate in local space (for OBB)
-
-		vector3 m_v3MinG = ZERO_V3; //minimum coordinate in global space (for ARBB)
-		vector3 m_v3MaxG = ZERO_V3; //maximum coordinate in global space (for ARBB)
-
-		vector3 m_v3HalfWidth = ZERO_V3; //half the size of the Oriented Bounding Box
-		vector3 m_v3ARBBSize = ZERO_V3;// size of the Axis (Re)Alligned Bounding Box
-
-		matrix4 m_m4ToWorld = IDENTITY_M4; //Matrix that will take us from local to world coordinate
-
-		uint m_nCollidingCount = 0; //size of the colliding set
-		PRigidBody* m_CollidingArray = nullptr; //array of rigid bodies this one is colliding with
+		void ConstructList(void);
 	};
-
-	void Update();
 }
 
 
