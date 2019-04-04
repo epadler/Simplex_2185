@@ -12,9 +12,9 @@ void Application::InitVariables(void)
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
 
 #ifdef DEBUG
-	uint uInstances = 1000;
+	uint uInstances = 2000;
 #else
-	uint uInstances = 1849;
+	uint uInstances = 2000;
 #endif
 	int nSquare = static_cast<int>(std::sqrt(uInstances));
 	m_uObjects = nSquare * nSquare;
@@ -46,7 +46,7 @@ void Application::InitVariables(void)
 			}*/
 		}
 	}
-	m_uOctantLevels = 1;
+	m_uOctantLevels = 0;
 	m_pRoot = new MyOctant(m_uOctantLevels, 5);
 	m_pEntityMngr->Update();
 }

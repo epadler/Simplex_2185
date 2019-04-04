@@ -19,6 +19,7 @@ void Simplex::MyOctant::AssignIDtoEntity(void)
 			{
 				m_EntityList.push_back(nIndex);
 				m_pEntityMngr->AddDimension(nIndex, m_uID);
+				//m_pEntityMngr->RemoveDimension(nIndex, m_pParent->m_uID);
 			}
 		}
 	}
@@ -70,6 +71,14 @@ uint MyOctant::GetOctantCount(void) { return m_uOctantCount; }
 
 	void Simplex::MyOctant::ConstructList(void)
 	{
+		for (uint nChild = 0; nChild < m_uChildren; nChild++)
+		{
+			m_pChild[nChild]->ConstructList();
+		}
+		if (m_EntityList.size() > 0)
+		{
+			m_pRoot->m_lChild.push_back(this);
+		}
 	}
 
 	void Update()
@@ -130,6 +139,8 @@ uint MyOctant::GetOctantCount(void) { return m_uOctantCount; }
 
 		m_v3Min = m_v3Center - (vector3(m_fSize) / 2.0f);
 		m_v3Max = m_v3Center + (vector3(m_fSize) / 2.0f);
+
+		m_uOctantCount++;
 	}
 
 	Simplex::MyOctant::MyOctant(MyOctant const & other)
@@ -245,7 +256,7 @@ uint MyOctant::GetOctantCount(void) { return m_uOctantCount; }
 	{
 		if (m_uID == a_nIndex)
 		{
-			m_pMeshMngr->AddWireCubeToRenderList(glm::translate(IDENTITY_M4, m_v3Center) + glm::scale(vector3(m_fSize)), a_v3Color, RENDER_WIRE);
+			m_pMeshMngr->AddWireCubeToRenderList(glm::translate(IDENTITY_M4, m_v3Center) + glm::scale(vector3(m_fSize * 2.0f)), a_v3Color, RENDER_WIRE);
 
 			return;
 		}
@@ -260,8 +271,9 @@ uint MyOctant::GetOctantCount(void) { return m_uOctantCount; }
 		for (uint nIndex = 0; nIndex < m_uChildren; nIndex++)
 		{
 			m_pChild[nIndex]->Display(a_v3Color);
-			m_pMeshMngr->AddWireCubeToRenderList(glm::translate(IDENTITY_M4, m_v3Center) * glm::scale(vector3(m_fSize)), a_v3Color, RENDER_WIRE);
 		}
+		m_pMeshMngr->AddWireCubeToRenderList(glm::translate(IDENTITY_M4, m_v3Center) * glm::scale(vector3(m_fSize)), a_v3Color, RENDER_WIRE);
+
 	}
 
 	void Simplex::MyOctant::DisplayLeafs(vector3 a_v3Color)
@@ -378,7 +390,9 @@ uint MyOctant::GetOctantCount(void) { return m_uOctantCount; }
 		{
 			m_pChild[nIndex]->KillBranches();
 			delete m_pChild[nIndex];
+			m_pChild[nIndex] = nullptr;
 		}
+		m_uChildren = 0;
 	}
 
 	void Simplex::MyOctant::ConstructTree(uint a_nMaxLevel)
