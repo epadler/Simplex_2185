@@ -12,7 +12,7 @@ void Application::InitVariables(void)
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
 
 #ifdef DEBUG
-	uint uInstances = 2000;
+	uint uInstances = 900;
 #else
 	uint uInstances = 2000;
 #endif
@@ -28,22 +28,6 @@ void Application::InitVariables(void)
 			vector3 v3Position = vector3(glm::sphericalRand(34.0f));
 			matrix4 m4Position = glm::translate(v3Position);
 			m_pEntityMngr->SetModelMatrix(m4Position);
-			// m_pEntityMngr->AddDimension(-1, uIndex);
-			// ++uIndex;
-			/*if (v3Position.x < 0.0f)
-			{
-				if (v3Position.x < -17.0f)
-					m_pEntityMngr->AddDimension(-1, 1);
-				else
-					m_pEntityMngr->AddDimension(-1, 2);
-			}
-			else if (v3Position.x > 0.0f)
-			{
-				if (v3Position.x < 17.0f)
-					m_pEntityMngr->AddDimension(-1, 3);
-				else
-					m_pEntityMngr->AddDimension(-1, 4);
-			}*/
 		}
 	}
 	m_uOctantLevels = 0;
